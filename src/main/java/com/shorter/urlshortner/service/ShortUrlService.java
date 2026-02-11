@@ -5,6 +5,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -81,6 +82,11 @@ public class ShortUrlService {
     }
 
 
+    @Cacheable(
+        cacheNames = "shortUrls",
+        key = "#shortCode.toLowerCase()",
+        unless = "#result == null || #result.isEmpty()"
+    )
     public Optional<ShortUrl> resolve(String shortCode) {
         return shortUrlRepository.findByShortCodeIgnoreCase(shortCode);
     }
